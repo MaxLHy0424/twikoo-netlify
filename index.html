@@ -1,13 +1,650 @@
-<html>
-
+<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
-  <meta charset="utf-8">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaxLHy - C++ Developer & Creator</title>
+    <style>
+        /* 全局变量与基础重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-main: #0f0f12;
+            --bg-card: #1a1a1f;
+            --border-color: #2d2d35;
+            --accent-green: #00d966;
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-family: Consolas, Monaco, 'Courier New', monospace;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* 导航栏样式 */
+        header {
+            padding: 1rem 0;
+            margin-bottom: 3rem;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            color: var(--accent-green);
+            font-weight: 700;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s ease;
+            font-size: 0.875rem;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-green);
+        }
+
+        /* 终端窗口通用样式 */
+        .terminal-window {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .terminal-header {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            align-items: center;
+        }
+
+        .terminal-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .dot-red { background-color: #ff5f57; }
+        .dot-yellow { background-color: #ffbd2e; }
+        .dot-green { background-color: #28ca42; }
+
+        .terminal-path {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-left: 0.5rem;
+        }
+
+        .terminal-command {
+            color: var(--accent-green);
+            margin: 0.75rem 0;
+        }
+
+        /* Hero 首屏区域 */
+        .hero-name {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .hero-title {
+            color: var(--accent-green);
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero-desc {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 1.25rem;
+            max-width: 600px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background-color: var(--accent-green);
+            color: var(--bg-main);
+            border: 1px solid var(--accent-green);
+        }
+
+        .btn-primary:hover {
+            background-color: transparent;
+            color: var(--accent-green);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+        }
+
+        /* 核心技能标签 */
+        .skills-tags {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-bottom: 4rem;
+        }
+
+        .skill-tag {
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tag-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .dot-cpp { background-color: #00599c; }
+        .dot-python { background-color: #ffd43b; }
+        .dot-more { background-color: var(--text-muted); }
+
+        /* 区块通用样式 */
+        .section {
+            margin-bottom: 5rem;
+        }
+
+        .section-comment {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            display: block;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-top: 0.25rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent-green);
+            display: inline-block;
+            margin-bottom: 2rem;
+        }
+
+        /* 技术栈卡片网格 */
+        .stack-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stack-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: border-color 0.2s ease;
+        }
+
+        .stack-card:hover {
+            border-color: var(--accent-green);
+        }
+
+        .stack-icon {
+            font-size: 1.25rem;
+        }
+
+        .stack-name {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* 技术栈分类卡片 */
+        .stack-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .category-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 1.25rem;
+        }
+
+        .category-title {
+            color: var(--accent-green);
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .category-content {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            line-height: 1.8;
+        }
+
+        /* 项目网格 */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .project-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.25rem;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .project-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-green);
+        }
+
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .project-lang {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            background-color: var(--bg-main);
+            color: var(--accent-green);
+        }
+
+        .project-star {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .project-title {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+        }
+
+        .project-desc {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+            flex-grow: 1;
+        }
+
+        .project-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .project-tag {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            background-color: var(--bg-main);
+            color: var(--text-muted);
+        }
+
+        /* 联系区域 */
+        .contact-terminal .terminal-line {
+            margin: 0.75rem 0;
+            color: var(--text-secondary);
+        }
+
+        .contact-prompt {
+            color: var(--accent-green);
+        }
+
+        .contact-links {
+            margin-top: 1.5rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .contact-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .contact-links a:hover {
+            color: var(--accent-green);
+        }
+
+        /* 页脚 */
+        footer {
+            padding: 2rem 0;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        /* 响应式适配 */
+        @media (max-width: 768px) {
+            .nav-links {
+                gap: 1rem;
+            }
+            .hero-name {
+                font-size: 1.5rem;
+            }
+            .section-title {
+                font-size: 1.25rem;
+            }
+            .stack-grid, .projects-grid {
+                grid-template-columns: 1fr;
+            }
+            footer {
+                flex-direction: column;
+                gap: 0.5rem;
+                align-items: center;
+                text-align: center;
+            }
+        }
+    </style>
 </head>
-
 <body>
-  <script type="text/javascript">
-    location.href = '/.netlify/functions/twikoo'
-  </script>
-</body>
+    <div class="container">
+        <!-- 顶部导航栏 -->
+        <header>
+            <nav>
+                <div class="nav-logo">~/MaxLHy</div>
+                <ul class="nav-links">
+                    <li><a href="#home">HOME</a></li>
+                    <li><a href="#skills">SKILLS</a></li>
+                    <li><a href="#projects">PROJECTS</a></li>
+                    <li><a href="#contact">CONTACT</a></li>
+                </ul>
+            </nav>
+        </header>
 
+        <main>
+            <!-- 首屏Hero区域 -->
+            <section id="home" class="section">
+                <div class="terminal-window">
+                    <div class="terminal-header">
+                        <span class="terminal-dot dot-red"></span>
+                        <span class="terminal-dot dot-yellow"></span>
+                        <span class="terminal-dot dot-green"></span>
+                        <span class="terminal-path">bash - MaxLHy@archlinux ~</span>
+                    </div>
+                    <p class="terminal-command">$ whoami</p>
+                    <h1 class="hero-name">MaxLHy</h1>
+                    <p class="hero-title">C++ Developer & Creator</p>
+
+                    <p class="terminal-command">$ cat about.txt</p>
+                    <p class="hero-desc">
+                        专注现代C++开发，热衷于高性能系统、底层工具与GUI/TUI应用开发。
+                        资深二次元爱好者，小说创作者，《蔚蓝档案》二创作者，学业稳居年级前列。
+                        痴迷于C++20/23现代标准、模板元编程，热爱探索代码的极致性能与优雅实现。
+                    </p>
+
+                    <div class="hero-buttons">
+                        <a href="https://github.com/" target="_blank" class="btn btn-primary">GitHub</a>
+                        <a href="#projects" class="btn btn-secondary">查看项目</a>
+                    </div>
+                    <p class="terminal-command">$</p>
+                </div>
+
+                <!-- 核心技能标签 -->
+                <div class="skills-tags">
+                    <div class="skill-tag">
+                        <span class="tag-dot dot-cpp"></span>
+                        C++
+                    </div>
+                    <div class="skill-tag">
+                        <span class="tag-dot dot-cpp"></span>
+                        C++20/23
+                    </div>
+                    <div class="skill-tag">
+                        <span class="tag-dot dot-python"></span>
+                        Python
+                    </div>
+                    <div class="skill-tag">
+                        <span class="tag-dot dot-more"></span>
+                        Makefile
+                    </div>
+                    <div class="skill-tag">
+                        <span class="tag-dot dot-more"></span>
+                        + más
+                    </div>
+                </div>
+            </section>
+
+            <!-- 技术栈区域 -->
+            <section id="skills" class="section">
+                <span class="section-comment">// 01</span>
+                <h2 class="section-title">技术栈</h2>
+
+                <div class="stack-grid">
+                    <div class="stack-card">
+                        <span class="stack-icon">⚙️</span>
+                        <span class="stack-name">C++ (C++20/23)</span>
+                    </div>
+                    <div class="stack-card">
+                        <span class="stack-icon">🐍</span>
+                        <span class="stack-name">Python</span>
+                    </div>
+                    <div class="stack-card">
+                        <span class="stack-icon">📝</span>
+                        <span class="stack-name">Markdown</span>
+                    </div>
+                    <div class="stack-card">
+                        <span class="stack-icon">📦</span>
+                        <span class="stack-name">Makefile</span>
+                    </div>
+                    <div class="stack-card">
+                        <span class="stack-icon">🌿</span>
+                        <span class="stack-name">Git</span>
+                    </div>
+                    <div class="stack-card">
+                        <span class="stack-icon">🖥️</span>
+                        <span class="stack-name">MSYS2</span>
+                    </div>
+                    <div class="stack-card">
+                        <span class="stack-icon">⚡</span>
+                        <span class="stack-name">PowerShell</span>
+                    </div>
+                    <div class="stack-card">
+                        <span class="stack-icon">🐧</span>
+                        <span class="stack-name">Linux</span>
+                    </div>
+                    <div class="stack-card">
+                        <span class="stack-icon">📄</span>
+                        <span class="stack-name">VS Code</span>
+                    </div>
+                </div>
+
+                <div class="stack-categories">
+                    <div class="category-card">
+                        <h3 class="category-title">核心开发</h3>
+                        <p class="category-content">
+                            C++ 现代标准<br>
+                            模板元编程<br>
+                            高性能系统开发<br>
+                            GUI/TUI 应用开发<br>
+                            网络编程与多线程
+                        </p>
+                    </div>
+                    <div class="category-card">
+                        <h3 class="category-title">创作领域</h3>
+                        <p class="category-content">
+                            小说创作<br>
+                            二次元二创<br>
+                            《蔚蓝档案》内容创作<br>
+                            技术博客写作<br>
+                            项目文档编写
+                        </p>
+                    </div>
+                    <div class="category-card">
+                        <h3 class="category-title">工具与系统</h3>
+                        <p class="category-content">
+                            Makefile 构建系统<br>
+                            Git 版本控制<br>
+                            MSYS2 开发环境<br>
+                            Linux 多平台<br>
+                            VS Code 开发配置
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 项目作品区域 -->
+            <section id="projects" class="section">
+                <span class="section-comment">// 02</span>
+                <h2 class="section-title">项目作品</h2>
+
+                <div class="projects-grid">
+                    <!-- 项目1 -->
+                    <div class="project-card">
+                        <div class="project-header">
+                            <span class="project-lang">C++</span>
+                            <span class="project-star">（小范围测试中，暂不公开）</span>
+                        </div>
+                        <h3 class="project-title">BlueArchive-Tools</h3>
+                        <p class="project-desc">
+                            《蔚蓝档案》数据查询与辅助工具，基于C++开发的轻量级桌面应用，支持角色数据、活动日程、养成规划等功能。
+                        </p>
+                        <div class="project-tags">
+                            <span class="project-tag">C++</span>
+                            <span class="project-tag">GUI</span>
+                            <span class="project-tag">Blue Archive</span>
+                        </div>
+                    </div>
+
+                    <!-- 项目2 -->
+                    <div class="project-card">
+                        <div class="project-header">
+                            <span class="project-lang">C++</span>
+                            <span class="project-star">（小范围测试中，暂不公开）</span>
+                        </div>
+                        <h3 class="project-title">Bilibili-Video-Downloader</h3>
+                        <p class="project-desc">
+                            基于C++开发的轻量级B站视频下载工具，支持多线程下载、清晰度选择、批量下载，无冗余外部依赖。
+                        </p>
+                        <div class="project-tags">
+                            <span class="project-tag">C++</span>
+                            <span class="project-tag">CLI</span>
+                            <span class="project-tag">网络编程</span>
+                        </div>
+                    </div>
+
+                    <!-- 项目4：SCLTK相关 -->
+                    <div class="project-card">
+                        <div class="project-header">
+                            <span class="project-lang">C++</span>
+                            <span class="project-star">★ 3</span>
+                        </div>
+                        <h3 class="project-title">SCLTK</h3>
+                        <p class="project-desc">
+                            学生机房电子教室软件反破解能力测试工具。
+                        </p>
+                        <div class="project-tags">
+                            <span class="project-tag">C++</span>
+                            <span class="project-tag">SCLTK</span>
+                            <span class="project-tag">Windows API</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 联系区域 -->
+            <section id="contact" class="section">
+                <span class="section-comment">// 03</span>
+                <h2 class="section-title">联系我</h2>
+
+                <div class="terminal-window contact-terminal">
+                    <div class="terminal-header">
+                        <span class="terminal-dot dot-red"></span>
+                        <span class="terminal-dot dot-yellow"></span>
+                        <span class="terminal-dot dot-green"></span>
+                        <span class="terminal-path">contact.sh</span>
+                    </div>
+                    <p class="terminal-line"><span class="contact-prompt">→</span> 有有趣的项目想一起交流？</p>
+                    <p class="terminal-line"><span class="contact-prompt">→</span> 想一起探讨现代C++开发？</p>
+                    <p class="terminal-line"><span class="contact-prompt">→</span> 或是同好的二次元小伙伴？</p>
+                    <p class="terminal-line"><span class="contact-prompt">→</span> 欢迎来找我玩。</p>
+
+                    <div class="contact-links">
+                        <p>GitHub: <a href="https://github.com/MaxLHy0424" target="_blank">github.com/MaxLHy0424</a></p>
+                        <p>Bilibili: <a href="https://space.bilibili.com/1678066522" target="_blank">space.bilibili.com/1678066522</a></p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- 页脚 -->
+        <footer>
+            <p>MaxLHy © 2026</p>
+        </footer>
+    </div>
+</body>
 </html>
